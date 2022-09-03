@@ -89,7 +89,7 @@ class PhimmoichillProvider : MainAPI() {
             .toIntOrNull()
         val tvType = if (document.select("div.latest-episode").isNotEmpty()
         ) TvType.TvSeries else TvType.Movie
-        val description = document.select("div#film-content[itemprop=author]").text().trim()
+        val description = document.select("div#film-content").text().trim()
         val trailer =
             document.select("div#trailer script").last()?.data()?.substringAfter("file: \"")
                 ?.substringBefore("\",")
@@ -100,12 +100,11 @@ class PhimmoichillProvider : MainAPI() {
                 val titleHeader = it.select("p") ?: return@mapNotNull null
                 val recUrl = titleHeader.attr("href") ?: return@mapNotNull null
                 val recTitle = titleHeader.text() ?: return@mapNotNull null
-                val poster = it.select("img").attr("data-src")
+                val poster = titleHeader.select("img.lazyloaded").attr("src")
                 MovieSearchResponse(
                     recTitle,
                     recUrl,
                     this.name,
-                    TvType.Movie,
                     poster
                 )
             }
